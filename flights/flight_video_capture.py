@@ -12,8 +12,8 @@ from time import time
 
 rospy.init_node('flight_video_capture')
 
-bridge = CvBridge()
-out = cv2.VideoWriter('output_test.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 40, (320, 240))
+# bridge = CvBridge()
+# out = cv2.VideoWriter('output_test.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 40, (320, 240))
 
 get_telemetry = rospy.ServiceProxy('get_telemetry', srv.GetTelemetry)
 navigate = rospy.ServiceProxy('navigate', srv.Navigate)
@@ -31,10 +31,10 @@ def navigate_wait(x=0, y=0, z=1.5, yaw=float('nan'), speed=0.5, frame_id='', aut
         rospy.sleep(0.2)
 
 
-def image_callback(data):
-    cv_image = bridge.imgmsg_to_cv2(data, 'bgr8')
-    out.write(cv_image)
-    cv2.imwrite('images/{}.jpg'.format(time()), cv_image)
+# def image_callback(data):
+#     cv_image = bridge.imgmsg_to_cv2(data, 'bgr8')
+#     out.write(cv_image)
+#     cv2.imwrite('images/{}.jpg'.format(time()), cv_image)
 
 
 def land_wait():
@@ -68,26 +68,26 @@ def square(first, second, third, fourth):
     navigate_wait(frame_id=f'aruco_{first}')
     telemetry = get_telemetry(frame_id='navigate_target')
     write_to_file(1, x=telemetry.x, y=telemetry.y, z=telemetry.z)
-    led_dist()
+    rospy.sleep(2)
 
     navigate_wait(frame_id=f'aruco_{second}')
     telemetry = get_telemetry(frame_id='navigate_target')
     write_to_file(2, x=telemetry.x, y=telemetry.y, z=telemetry.z)
-    led_dist()
+    rospy.sleep(2)
 
     navigate_wait(frame_id=f'aruco_{third}')
     telemetry = get_telemetry(frame_id='navigate_target')
     write_to_file(3, x=telemetry.x, y=telemetry.y, z=telemetry.z)
-    led_dist()
+    rospy.sleep(2)
 
     navigate_wait(frame_id=f'aruco_{fourth}')
     telemetry = get_telemetry(frame_id='navigate_target')
     write_to_file(4, x=telemetry.x, y=telemetry.y, z=telemetry.z)
-    led_dist()
+    rospy.sleep(2)
 
 
 
-rospy.Subscriber('main_camera/image_raw', Image, image_callback)
+# rospy.Subscriber('main_camera/image_raw', Image, image_callback)
 rospy.Subscriber('rangefinder/range', Range, range_callback)
 
 with open('flight_data.txt', 'w') as f:
@@ -98,4 +98,4 @@ square(116, 128, 125, 113)
 
 land_wait()
 
-out.release()
+# out.release()
